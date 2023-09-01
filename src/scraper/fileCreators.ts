@@ -3,7 +3,7 @@ import type { CharacterData } from './types';
 
 export const createDataFolder = () => {
   if (!fs.existsSync('./src/data')) {
-    fs.mkdirSync('/src/data', { recursive: true });
+    fs.mkdirSync('./src/data', { recursive: true });
   }
 };
 
