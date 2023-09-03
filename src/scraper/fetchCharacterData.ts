@@ -16,13 +16,18 @@ export async function getCharacterData(characterUrl: string): Promise<CharacterD
     const name = $('#mw-content-text > div.mw-parser-output > aside > h2.pi-title').text();
 
     const weapon = $(
-      '#mw-content-text > div.mw-parser-output > aside > section.pi-item.pi-group.pi-border-color > table > tbody > tr > td:nth-child(2) > span > a:nth-child(2)',
+      '#mw-content-text > div.mw-parser-output > aside > section:nth-child(4) > table > tbody > tr > td:nth-child(2) > span > a:nth-child(2)',
     ).text();
-    const element = $(
-      '#mw-content-text > div.mw-parser-output > aside > section.pi-item.pi-group.pi-border-color > table > tbody > tr > td:nth-child(3) > span > a:nth-child(2)',
+    let element = $(
+      '#mw-content-text > div.mw-parser-output > aside > section:nth-child(5) > table > tbody > tr > td:nth-child(1) > span > a:nth-child(2)',
     ).text();
+    if (element?.length === 0) {
+      element = $(
+        '#mw-content-text > div.mw-parser-output > aside > section:nth-child(4) > table > tbody > tr > td:nth-child(3) > span > a:nth-child(2)',
+      ).text();
+    }
     const rarity = $(
-      '#mw-content-text > div.mw-parser-output > aside > section.pi-item.pi-group.pi-border-color > table > tbody > tr > td:nth-child(1) > img',
+      '#mw-content-text > div.mw-parser-output > aside > section:nth-child(4) > table > tbody > tr > td:nth-child(1) > img',
     ).attr('title');
     const normalBossMaterial = $(
       `#mw-content-text > div.mw-parser-output > span.card-list-container > .card-container:nth-of-type(2) > span.card-caption > a`,

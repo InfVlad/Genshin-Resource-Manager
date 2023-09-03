@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --fix",
-    "scrape": "tsx ./src/scraper/main.ts && pnpm prettier src/data --write",
+    "scrape": "tsx ./src/scraper/main.ts && pnpm prettier src/data --write"
   },
   "dependencies": {
     "@prisma/client": "^5.4.2",
