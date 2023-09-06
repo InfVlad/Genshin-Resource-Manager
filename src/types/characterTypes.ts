@@ -1,4 +1,4 @@
-import type { allCharactersData } from '../data/charactersData';
+import type { allCharactersData } from '@/data/charactersData';
 
 type BaseData = (typeof allCharactersData)[number];
 
