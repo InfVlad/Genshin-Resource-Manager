@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider              = "zod-prisma"
+  output                = "./zod" // (default) the directory where generated zod schemas will be saved
+  relationModel         = true // (default) Create and export both plain and related models.
+  modelCase             = "camelCase" // Output models using camel case (ex. userModel, postModel)
+  modelSuffix           = "Schema" // (default) Suffix to apply to your prisma models when naming Zod schemas
+  useDecimalJs          = true // represent the prisma Decimal type using Decimal.js (as Prisma does)
+  prismaJsonNullability = true // (default) uses prisma's scheme for JSON field nullability
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Necessary for Next auth
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  UserCharacter UserCharacter[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model UserCharacter {
+  id   String @id @default(cuid())
+  name String
+
+  /// @zod.min(1, { message: "The character current level must be higher than 0" }).max(90, { message: "The character current level must be lower than 90" })
+  currentLevel Int
+
+  /// @zod.min(1, { message: "The character desired level must be higher than 0" }).max(90, { message: "The character desired level must be lower than 90" })
+  desiredLevel Int
+
+  /// @zod.min(1, { message: "The character currentAscension must be higher than 0" }).max(6, { message: "The character currentAscension must be lower than 6" })
+  currentAscension Int @default(1)
+
+  /// @zod.min(1, { message: "The character desiredAscension must be higher than 0" }).max(6, { message: "The character desiredAscension must be lower than 6" })
+  desiredAscension Int @default(1)
+
+  /// @zod.min(1, { message: "The character basicAttacksCurrent must be higher than 0" }).max(10, { message: "The character basicAttacksCurrent must be lower than 10" })
+  basicAttacksCurrent Int
+
+  /// @zod.min(1, { message: "The character basicAttacksDesired must be higher than 0" }).max(10, { message: "The character basicAttacksDesired must be lower than 10" })
+  basicAttacksDesired Int
+
+  /// @zod.min(1, { message: "The character elementalSkillCurrent must be higher than 0" }).max(10, { message: "The character elementalSkillCurrent must be lower than 10" })
+  elementalSkillCurrent Int
+
+  /// @zod.min(1, { message: "The character elementalSkillDesired must be higher than 0" }).max(10, { message: "The character elementalSkillDesired must be lower than 10" })
+  elementalSkillDesired Int
+
+  /// @zod.min(1, { message: "The character burstSkillCurrent must be higher than 0" }).max(10, { message: "The character burstSkillCurrent must be lower than 10" })
+  burstSkillCurrent Int
+
+  /// @zod.min(1, { message: "The character burstSkillDesired must be higher than 0" }).max(10, { message: "The character burstSkillDesired must be lower than 10" })
+  burstSkillDesired Int
+  userId            String
+  user              User   @relation(fields: [userId], references: [id])
+
+  @@map("userCharacter")
+}
