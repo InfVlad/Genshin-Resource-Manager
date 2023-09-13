@@ -27,3 +27,30 @@ it('Should throw error UNAUTHORIZED', async () => {
     publicCaller.userCharacter.createUserCharacter(character),
   ).rejects.toThrowError();
 });
+
+it('Should return "Character Created Successfully"', async () => {
+  type Input = inferProcedureInput<AppRouter['userCharacter']['createUserCharacter']>;
+  const character: Input = mockedCharacters[0];
+  const result = await authedCaller.userCharacter.createUserCharacter(character);
+  expect(result.message).toBe(`Character ${character.name} created successfully`);
+});
+it('Should return "Character Created Successfully"', async () => {
+  type Input = inferProcedureInput<AppRouter['userCharacter']['createUserCharacter']>;
+  const character: Input = mockedCharacters[1];
+  const result = await authedCaller.userCharacter.createUserCharacter(character);
+  expect(result.message).toBe(`Character ${character.name} created successfully`);
+});
+it('Should throw Error, Character Exists', async () => {
+  type Input = inferProcedureInput<AppRouter['userCharacter']['createUserCharacter']>;
+  const character: Input = mockedCharacters[1];
+  await expect(() =>
+    authedCaller.userCharacter.createUserCharacter(character),
+  ).rejects.toThrowError();
+});
+it('Should throw Error, Invalid Character Name', async () => {
+  type Input = inferProcedureInput<AppRouter['userCharacter']['createUserCharacter']>;
+  const character: Input = mockedCharacters[2];
+  await expect(() =>
+    authedCaller.userCharacter.createUserCharacter(character),
+  ).rejects.toThrowError();
+});
