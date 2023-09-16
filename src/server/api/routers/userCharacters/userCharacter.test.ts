@@ -54,3 +54,19 @@ it('Should throw Error, Invalid Character Name', async () => {
     authedCaller.userCharacter.createUserCharacter(character),
   ).rejects.toThrowError();
 });
+
+it('Should throw Error, Current Basic attack level should be lower or equal to Desired', async () => {
+  type Input = inferProcedureInput<AppRouter['userCharacter']['createUserCharacter']>;
+  const character: Input = { ...mockedCharacters[1], basicAttacksCurrent: 6 };
+  await expect(() =>
+    authedCaller.userCharacter.createUserCharacter(character),
+  ).rejects.toThrowError();
+});
+it('Should throw Error, Current Burst skill level should be lower or equal to Desired', async () => {
+  type Input = inferProcedureInput<AppRouter['userCharacter']['createUserCharacter']>;
+  const character: Input = { ...mockedCharacters[1], burstSkillCurrent: 18 };
+  await db.userCharacter.deleteMany();
+  await expect(() =>
+    authedCaller.userCharacter.createUserCharacter(character),
+  ).rejects.toThrowError();
+});
