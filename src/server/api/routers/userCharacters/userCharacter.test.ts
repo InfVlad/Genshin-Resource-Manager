@@ -70,3 +70,20 @@ it('Should throw Error, Current Burst skill level should be lower or equal to De
     authedCaller.userCharacter.createUserCharacter(character),
   ).rejects.toThrowError();
 });
+
+it('Should throw Error, Desired ascension should be equal or lower than 6', async () => {
+  type Input = inferProcedureInput<AppRouter['userCharacter']['createUserCharacter']>;
+  const character: Input = { ...mockedCharacters[0], desiredAscension: 14 };
+  await expect(() =>
+    authedCaller.userCharacter.createUserCharacter(character),
+  ).rejects.toThrowError();
+});
+it('Should update the character successfully', async () => {
+  type Input = inferProcedureInput<AppRouter['userCharacter']['createUserCharacter']>;
+  const character: Input = { ...mockedCharacters[3], basicAttacksCurrent: 1 };
+  const creationResult = await authedCaller.userCharacter.createUserCharacter(character);
+  const updateInput = { ...creationResult.char, basicAttacksCurrent: 5 };
+  const result = await authedCaller.userCharacter.updateUserCharacter(updateInput);
+  expect(result.message).toBe(`Character ${character.name} updated successfully`);
+  expect(result.char.basicAttacksCurrent).toBe(5);
+});
