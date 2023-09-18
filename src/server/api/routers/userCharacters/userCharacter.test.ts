@@ -87,3 +87,30 @@ it('Should update the character successfully', async () => {
   expect(result.message).toBe(`Character ${character.name} updated successfully`);
   expect(result.char.basicAttacksCurrent).toBe(5);
 });
+
+it('Should throw Error, Character does not exist', async () => {
+  type Input = inferProcedureInput<AppRouter['userCharacter']['createUserCharacter']>;
+  await db.userCharacter.deleteMany();
+  const character: Input = { ...mockedCharacters[3], basicAttacksCurrent: 1 };
+  const creationResult = await authedCaller.userCharacter.createUserCharacter(character);
+  const updateInput = { ...creationResult.char, id: 'wrasd' };
+  // const result = await authedCaller.userCharacter.updateUserCharacter(updateInput);
+  await expect(() =>
+    authedCaller.userCharacter.updateUserCharacter(updateInput),
+  ).rejects.toThrowError();
+});
+it('Should delete the character successfully', async () => {
+  type Input = inferProcedureInput<AppRouter['userCharacter']['createUserCharacter']>;
+  await db.userCharacter.deleteMany();
+  const character: Input = { ...mockedCharacters[3], basicAttacksCurrent: 1 };
+  const creationResult = await authedCaller.userCharacter.createUserCharacter(character);
+  const result = await authedCaller.userCharacter.deleteUserCharacter({
+    id: creationResult.char.id,
+  });
+  expect(result.message).toBe(`Character ${character.name} deleted successfully`);
+  await expect(() =>
+    authedCaller.userCharacter.deleteUserCharacter({
+      id: creationResult.char.id,
+    }),
+  ).rejects.toThrowError();
+});
